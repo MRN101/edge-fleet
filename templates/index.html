@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edge Fleet Health Monitor</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-brand">
+                <div class="brand-icon">&#x2699;</div>
+                <div>
+                    <h1>Edge Fleet Health Monitor</h1>
+                    <p class="subtitle">Distributed Edge Node Telemetry &amp; Availability Dashboard</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <div class="sync-indicator">
+                    <span class="sync-dot" id="sync-dot"></span>
+                    <span id="sync-text">Live Polling (5s)</span>
+                </div>
+                <button id="refresh-btn" class="btn btn-primary" title="Refresh dashboard data now">
+                    &#x21bb; Refresh Now
+                </button>
+            </div>
+        </header>
+
+        <!-- Summary Metric Cards -->
+        <section class="summary-cards" aria-label="Fleet Summary">
+            <div class="card summary-card">
+                <div class="card-icon blue-icon">&#x1F5A5;</div>
+                <div class="card-content">
+                    <span class="card-label">Total Known Nodes</span>
+                    <span class="card-value" id="total-nodes">0</span>
+                </div>
+            </div>
+
+            <div class="card summary-card">
+                <div class="card-icon green-icon">&#x2713;</div>
+                <div class="card-content">
+                    <span class="card-label">Online Nodes</span>
+                    <span class="card-value text-success" id="online-nodes">0</span>
+                </div>
+            </div>
+
+            <div class="card summary-card">
+                <div class="card-icon red-icon">&#x26A0;</div>
+                <div class="card-content">
+                    <span class="card-label">Offline Nodes (&gt;15s)</span>
+                    <span class="card-value text-danger" id="offline-nodes">0</span>
+                </div>
+            </div>
+
+            <div class="card summary-card">
+                <div class="card-icon amber-icon">&#x1F525;</div>
+                <div class="card-content">
+                    <span class="card-label">High CPU Warnings (&ge;80%)</span>
+                    <span class="card-value text-warning" id="high-cpu-nodes">0</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Section: Fleet Status Table -->
+        <section class="panel">
+            <div class="panel-header">
+                <div class="panel-title-group">
+                    <h2>Live Edge Node Status</h2>
+                    <span class="panel-badge" id="nodes-count-badge">0 nodes</span>
+                </div>
+                <p class="panel-hint">Nodes report every ~5s. Status automatically switches to Offline if silent for &gt;15s.</p>
+            </div>
+
+            <div class="table-responsive">
+                <table class="data-table" id="nodes-table">
+                    <thead>
+                        <tr>
+                            <th>Node ID</th>
+                            <th>Connection Status</th>
+                            <th>CPU Usage</th>
+                            <th>RAM Usage</th>
+                            <th>Disk Usage</th>
+                            <th>Last Report</th>
+                            <th>Time Elapsed</th>
+                        </tr>
+                    </thead>
+                    <tbody id="nodes-table-body">
+                        <!-- Populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty State for Nodes -->
+            <div id="nodes-empty-state" class="empty-state">
+                <div class="empty-state-icon">&#x1F4E1;</div>
+                <h3>No Edge Nodes Reporting Yet</h3>
+                <p>Run the agent script in a terminal to register an edge node:</p>
+                <div class="code-snippet">
+                    <code>python agent.py node-a</code>
+                </div>
+                <p class="empty-state-note">You can run multiple nodes in separate terminals using <code>node-b</code> and <code>node-c</code>.</p>
+            </div>
+        </section>
+
+        <!-- Secondary Section: Recent Telemetry History -->
+        <section class="panel">
+            <div class="panel-header">
+                <div class="panel-title-group">
+                    <h2>Recent Telemetry Stream</h2>
+                    <span class="panel-badge">Last 15 readings</span>
+                </div>
+                <p class="panel-hint">Raw event stream recorded in the local SQLite database.</p>
+            </div>
+
+            <div class="table-responsive">
+                <table class="data-table" id="metrics-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Node ID</th>
+                            <th>Timestamp</th>
+                            <th>CPU %</th>
+                            <th>RAM %</th>
+                            <th>Disk %</th>
+                        </tr>
+                    </thead>
+                    <tbody id="metrics-table-body">
+                        <!-- Populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty State for Metrics -->
+            <div id="metrics-empty-state" class="empty-state">
+                <p>No historical telemetry logged yet.</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="dashboard-footer">
+            <p><strong>Edge Fleet Health Monitor</strong> &bull; Simple edge infrastructure telemetry demonstration.</p>
+            <p class="footer-meta">Server Time: <span id="server-time">Checking...</span> | Polling Endpoint: <code>/api/nodes</code></p>
+        </footer>
+    </div>
+
+    <!-- Application JavaScript -->
+    <script src="/static/app.js"></script>
+</body>
+</html>
